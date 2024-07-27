@@ -1,6 +1,10 @@
 package heap
 
-type MinHeap []int
+type HeapNode interface {
+    GetCost() float64
+}
+
+type MinHeap []HeapNode
 
 func (heap MinHeap) swapByIndex(i int, j int) {
 	heap[i], heap[j] = heap[j], heap[i]
@@ -24,7 +28,7 @@ func (heap MinHeap) Len() int {
 
 func (heap *MinHeap) heapifyUp(i int) {
 	parentIdx := heap.parentIndex(i)
-	for (*heap)[parentIdx] > (*heap)[i] {
+	for (*heap)[parentIdx].GetCost() > (*heap)[i].GetCost() {
 		heap.swapByIndex(parentIdx, i)
 	}
 }
@@ -35,11 +39,11 @@ func (heap *MinHeap) heapifyDown(i int) {
 
     smallerChildIdx := i
 
-    if leftChildIdx <= heap.Len() - 1 && (*heap)[smallerChildIdx] > (*heap)[leftChildIdx] {
+    if leftChildIdx <= heap.Len() - 1 && (*heap)[smallerChildIdx].GetCost() > (*heap)[leftChildIdx].GetCost() {
         smallerChildIdx = leftChildIdx
     }
     
-    if rightChildIdx <= heap.Len() - 1 && (*heap)[smallerChildIdx] > (*heap)[rightChildIdx] {
+    if rightChildIdx <= heap.Len() - 1 && (*heap)[smallerChildIdx].GetCost() > (*heap)[rightChildIdx].GetCost() {
         smallerChildIdx = rightChildIdx
     }
 
@@ -49,22 +53,22 @@ func (heap *MinHeap) heapifyDown(i int) {
     }
 }
 
-func (heap *MinHeap) Push(node int) {
+func (heap *MinHeap) Push(node HeapNode) {
 	*heap = append(*heap, node)
 
 	newValueIdx := heap.Len() - 1
 	parent := (*heap)[heap.parentIndex(newValueIdx)]
-	if parent > node {
+	if parent.GetCost() > node.GetCost() {
 		heap.heapifyUp(newValueIdx)
 	}
 }
 
-func (heap *MinHeap) Pop() *int {
+func (heap *MinHeap) Pop() HeapNode {
     if heap.Len() == 0 {
         return nil
     }
 
-    minValue := (*heap)[0]
+    minNode := (*heap)[0]
 
     // Swap the current root with the last value,
     // discard the last value in the heap,
@@ -75,5 +79,5 @@ func (heap *MinHeap) Pop() *int {
 
     heap.heapifyDown(0)
 
-    return &minValue
+    return minNode
 }
