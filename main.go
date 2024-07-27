@@ -1,8 +1,8 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
-    "container/list"
 	"sw/visualizer/heap"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -62,15 +62,15 @@ type UcsNode struct {
 }
 
 func (node UcsNode) GetCompletePath() *list.List {
-    path := list.New()
+	path := list.New()
 
-    currentNode := node.BackUcsPointer
-    for currentNode != nil && currentNode.LastEdge != nil {
-        path.PushFront(currentNode.LastEdge)
-        currentNode = currentNode.BackUcsPointer
-    }
-    
-    return path
+	currentNode := node.BackUcsPointer
+	for currentNode != nil && currentNode.LastEdge != nil {
+		path.PushFront(currentNode.LastEdge)
+		currentNode = currentNode.BackUcsPointer
+	}
+
+	return path
 }
 
 func (node *UcsNode) GetCost() float64 {
@@ -104,8 +104,8 @@ func win() {
 }
 
 type SearchResult struct {
-    Success      bool
-    CompletePath *list.List
+	Success      bool
+	CompletePath *list.List
 }
 
 func containsNode(haystack []*Node, needle *Node) bool {
@@ -161,16 +161,16 @@ func ucs() *SearchResult {
 		}
 	}
 
-    return &SearchResult{false, nil}
+	return &SearchResult{false, nil}
 }
 
 func main() {
-    searchResult := ucs()
+	searchResult := ucs()
 
-    if searchResult.Success {
-        for e := searchResult.CompletePath.Front(); e != nil; e = e.Next() {
-            val := e.Value.(*Edge)
-            fmt.Printf("{%d, %d} ----> {%d, %d}\n", val.From.Position.X, val.From.Position.Y, val.To.Position.X, val.To.Position.Y)
-        }
-    }
+	if searchResult.Success {
+		for e := searchResult.CompletePath.Front(); e != nil; e = e.Next() {
+			val := e.Value.(*Edge)
+			fmt.Printf("{%d, %d} ----> {%d, %d}\n", val.From.Position.X, val.From.Position.Y, val.To.Position.X, val.To.Position.Y)
+		}
+	}
 }
