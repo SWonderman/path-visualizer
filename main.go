@@ -4,6 +4,7 @@ import (
 	"slices"
 	"sw/visualizer/algo"
 	"sw/visualizer/graph"
+	"sw/visualizer/matrix"
 	"sw/visualizer/utils"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -21,24 +22,13 @@ func win() {
 	const ROWS int32 = 9
 	const BLOCK_SIZE int32 = 50
 
-	matrix := [][]byte{
-		{'S', '-', '-', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', 'x', '-', '-'},
-		{'x', '-', '-', '-', 'x', '-', '-', '-', 'x'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', 'x'},
-		{'-', '-', '-', '-', '-', 'x', '-', '-', '-'},
-		{'x', '-', 'x', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', 'F'},
-	}
-
+	matrix := matrix.GetSimpleMatrixWithObstacles()
 	start := graph.GridNode{Position: graph.Vector2{X: 0, Y: 0}}
 	end := graph.GridNode{Position: graph.Vector2{X: 8, Y: 8}}
 
 	obstacles := []byte{'x'}
 
-	result := algo.RunUcs(&matrix, &start, &end, &obstacles)
+	result := algo.RunUcs(matrix, &start, &end, &obstacles)
 
 	visitedIndex := 0
 	pathIndex := 0
@@ -86,7 +76,7 @@ func win() {
 				}
 
 				// Draw obstacles
-				if slices.Contains(obstacles, matrix[i][j]) {
+				if slices.Contains(obstacles, (*matrix)[i][j]) {
 					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Black)
 				}
 
