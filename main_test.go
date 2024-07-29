@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"sw/visualizer/graph"
+	"testing"
+)
 
 func TestGetNeighboursTopLeft(t *testing.T) {
 	matrix := [][]byte{
@@ -11,7 +14,7 @@ func TestGetNeighboursTopLeft(t *testing.T) {
 		{'-', '-', '-', '-'},
 	}
 
-	node := &Node{Position: Vector2{X: 0, Y: 0}}
+	node := &graph.GridNode{Position: graph.Vector2{X: 0, Y: 0}}
 	neighbours := node.GetNeighbours(&matrix)
 
 	expected := []struct {
@@ -46,7 +49,7 @@ func TestGetNeighboursTopRight(t *testing.T) {
 		{'-', '-', '-', '-'},
 	}
 
-	node := &Node{Position: Vector2{X: 3, Y: 0}}
+	node := &graph.GridNode{Position: graph.Vector2{X: 3, Y: 0}}
 	neighbours := node.GetNeighbours(&matrix)
 
 	expected := []struct {
@@ -81,7 +84,7 @@ func TestGetNeighboursBottomLeft(t *testing.T) {
 		{'S', '-', '-', '-'},
 	}
 
-	node := &Node{Position: Vector2{X: 0, Y: 4}}
+	node := &graph.GridNode{Position: graph.Vector2{X: 0, Y: 4}}
 	neighbours := node.GetNeighbours(&matrix)
 
 	expected := []struct {
@@ -116,7 +119,7 @@ func TestGetNeighboursBottomRight(t *testing.T) {
 		{'-', '-', '-', 'S'},
 	}
 
-	node := &Node{Position: Vector2{X: 3, Y: 4}}
+	node := &graph.GridNode{Position: graph.Vector2{X: 3, Y: 4}}
 	neighbours := node.GetNeighbours(&matrix)
 
 	expected := []struct {
@@ -151,7 +154,7 @@ func TestGetNeighboursMiddle(t *testing.T) {
 		{'-', '-', '-', '-', '-'},
 	}
 
-	node := &Node{Position: Vector2{X: 2, Y: 2}}
+	node := &graph.GridNode{Position: graph.Vector2{X: 2, Y: 2}}
 	neighbours := node.GetNeighbours(&matrix)
 
 	expected := []struct {
