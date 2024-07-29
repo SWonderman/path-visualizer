@@ -45,7 +45,7 @@ func (result *SearchResult) ShowCompletePath() {
 	}
 }
 
-func RunUcs(matrix *[][]byte, start *graph.GridNode, end *graph.GridNode) *SearchResult {
+func RunUcs(matrix *[][]byte, start *graph.GridNode, end *graph.GridNode, obstacles *[]byte) *SearchResult {
 	pqueue := heap.MinHeap{}
 	visited := []*graph.GridNode{}
 
@@ -67,7 +67,7 @@ func RunUcs(matrix *[][]byte, start *graph.GridNode, end *graph.GridNode) *Searc
 		if !utils.ContainsNode(visited, currentNode) {
 			visited = append(visited, currentNode)
 
-			for _, edge := range currentNode.GetNeighbours(matrix) {
+			for _, edge := range currentNode.GetNeighbours(matrix, obstacles) {
 				newCost := ucsNode.TravelCost + edge.Weight
 				pqueue.Push(&UcsNode{edge.To, edge, ucsNode, newCost})
 			}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"slices"
 	"sw/visualizer/algo"
 	"sw/visualizer/graph"
 	"sw/visualizer/utils"
@@ -22,12 +23,12 @@ func win() {
 
 	matrix := [][]byte{
 		{'S', '-', '-', '-', '-', '-', '-', '-', '-'},
+		{'-', '-', '-', '-', '-', '-', 'x', '-', '-'},
+		{'x', '-', '-', '-', 'x', '-', '-', '-', 'x'},
 		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
-		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
+		{'-', '-', '-', '-', '-', '-', '-', '-', 'x'},
+		{'-', '-', '-', '-', '-', 'x', '-', '-', '-'},
+		{'x', '-', 'x', '-', '-', '-', '-', '-', '-'},
 		{'-', '-', '-', '-', '-', '-', '-', '-', '-'},
 		{'-', '-', '-', '-', '-', '-', '-', '-', 'F'},
 	}
@@ -35,7 +36,9 @@ func win() {
 	start := graph.GridNode{Position: graph.Vector2{X: 0, Y: 0}}
 	end := graph.GridNode{Position: graph.Vector2{X: 8, Y: 8}}
 
-	result := algo.RunUcs(&matrix, &start, &end)
+	obstacles := []byte{'x'}
+
+	result := algo.RunUcs(&matrix, &start, &end, &obstacles)
 
 	visitedIndex := 0
 	pathIndex := 0
@@ -70,6 +73,7 @@ func win() {
 
 		rl.ClearBackground(rl.RayWhite)
 
+		// TODO: optimize those nested loops
 		for i := range ROWS {
 			for j := range ROWS {
 				// Draw start and end nodes
@@ -79,6 +83,11 @@ func win() {
 
 				if i == int32(end.Position.X) && j == int32(end.Position.Y) {
 					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Green)
+				}
+
+				// Draw obstacles
+				if slices.Contains(obstacles, matrix[i][j]) {
+					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Black)
 				}
 
 				// Draw visited
