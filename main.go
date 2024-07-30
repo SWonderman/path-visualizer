@@ -10,17 +10,17 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func win() {
-	const WINDOW_WIDTH int32 = 450
-	const WINDOW_HEIGHT int32 = 450
+const WINDOW_WIDTH int32 = 450
+const WINDOW_HEIGHT int32 = 450
 
+const ROWS int32 = 9
+const BLOCK_SIZE int32 = 50
+
+func win() {
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Path Visualizer")
 	defer rl.CloseWindow()
 
 	rl.SetTargetFPS(60)
-
-	const ROWS int32 = 9
-	const BLOCK_SIZE int32 = 50
 
 	matrix := matrix.GetSimpleMatrixWithObstacles()
 	start := graph.GridNode{Position: graph.Vector2{X: 0, Y: 0}}
@@ -28,7 +28,9 @@ func win() {
 
 	obstacles := []byte{'x'}
 
-	result := algo.RunUcs(matrix, &start, &end, &obstacles)
+	var result *algo.SearchResult
+	runAlgorithm := false
+	wasAlgorithmRun := false
 
 	visitedIndex := 0
 	pathIndex := 0
@@ -46,17 +48,41 @@ func win() {
 		intervalAccumulator += dt
 		pathIntervalAccumulator += dt
 
-		// Push nodes that should be drawn on interval basis
-		if visitedIndex < len(result.Visited) && intervalAccumulator >= fillInterval {
-			readyToDrawVisitedNodes = append(readyToDrawVisitedNodes, result.Visited[visitedIndex])
-			visitedIndex += 1
-			intervalAccumulator = 0.0
+		if rl.IsKeyDown(rl.KeySpace) {
+			if wasAlgorithmRun {
+				visitedIndex = 0
+				pathIndex = 0
+				intervalAccumulator = 0.0
+				pathIntervalAccumulator = 0.0
+				readyToDrawVisitedNodes = nil
+				readyToDrawPathEdges = nil
+				result = nil
+				wasAlgorithmRun = false
+			}
+		}
+		if rl.IsKeyDown(rl.KeyEnter) {
+			runAlgorithm = true
 		}
 
-		if result.CompletePath != nil && pathIndex < result.CompletePath.Len() && pathIntervalAccumulator >= fillPathInterval {
-			readyToDrawPathEdges = append(readyToDrawPathEdges, utils.FindInLinkedListByIndex(result.CompletePath, pathIndex).(*graph.Edge))
-			pathIndex += 1
-			pathIntervalAccumulator = 0.0
+		if runAlgorithm {
+			result = algo.RunUcs(matrix, &start, &end, &obstacles)
+			runAlgorithm = false
+			wasAlgorithmRun = true
+		}
+
+		if result != nil {
+			// Push nodes that should be drawn on interval basis
+			if visitedIndex < len(result.Visited) && intervalAccumulator >= fillInterval {
+				readyToDrawVisitedNodes = append(readyToDrawVisitedNodes, result.Visited[visitedIndex])
+				visitedIndex += 1
+				intervalAccumulator = 0.0
+			}
+
+			if result.CompletePath != nil && pathIndex < result.CompletePath.Len() && pathIntervalAccumulator >= fillPathInterval {
+				readyToDrawPathEdges = append(readyToDrawPathEdges, utils.FindInLinkedListByIndex(result.CompletePath, pathIndex).(*graph.Edge))
+				pathIndex += 1
+				pathIntervalAccumulator = 0.0
+			}
 		}
 
 		rl.BeginDrawing()
@@ -80,22 +106,24 @@ func win() {
 					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Black)
 				}
 
-				// Draw visited
-				for _, v := range readyToDrawVisitedNodes {
-					// Do not draw on top of the start node
-					if i == int32(start.Position.X) && j == int32(start.Position.Y) {
-						continue
+				if result != nil {
+					// Draw visited
+					for _, v := range readyToDrawVisitedNodes {
+						// Do not draw on top of the start node
+						if i == int32(start.Position.X) && j == int32(start.Position.Y) {
+							continue
+						}
+
+						if i == int32(v.Position.X) && j == int32(v.Position.Y) {
+							rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.LightGray)
+						}
 					}
 
-					if i == int32(v.Position.X) && j == int32(v.Position.Y) {
-						rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.LightGray)
-					}
-				}
-
-				// Draw path
-				for _, e := range readyToDrawPathEdges {
-					if i == int32(e.To.Position.X) && j == int32(e.To.Position.Y) {
-						rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Beige)
+					// Draw path
+					for _, e := range readyToDrawPathEdges {
+						if i == int32(e.To.Position.X) && j == int32(e.To.Position.Y) {
+							rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Beige)
+						}
 					}
 				}
 
