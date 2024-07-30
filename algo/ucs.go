@@ -41,7 +41,7 @@ type SearchResult struct {
 func (result *SearchResult) ShowCompletePath() {
 	for e := result.CompletePath.Front(); e != nil; e = e.Next() {
 		val := e.Value.(*graph.Edge)
-		fmt.Printf("{%d, %d} ----> {%d, %d}\n", val.From.Position.X, val.From.Position.Y, val.To.Position.X, val.To.Position.Y)
+		fmt.Printf("{%d, %d} ----> {%d, %d}\n", val.From.Row, val.From.Column, val.To.Row, val.To.Column)
 	}
 }
 
@@ -59,7 +59,7 @@ func RunUcs(matrix *[][]byte, start *graph.GridNode, end *graph.GridNode, obstac
 		ucsNode := pqueue.Pop().(*UcsNode)
 		currentNode := ucsNode.CurrentNode
 
-		if currentNode.Position.X == end.Position.X && currentNode.Position.Y == end.Position.Y {
+		if currentNode.Row == end.Row && currentNode.Column == end.Column {
 			result = &SearchResult{true, ucsNode.GetCompletePath(), visited}
 			break
 		}

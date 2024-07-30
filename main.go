@@ -23,8 +23,8 @@ func win() {
 	rl.SetTargetFPS(60)
 
 	matrix := matrix.GetSimpleMatrixWithObstacles()
-	start := graph.GridNode{Position: graph.Vector2{X: 0, Y: 0}}
-	end := graph.GridNode{Position: graph.Vector2{X: 8, Y: 8}}
+	start := graph.GridNode{0, 0}
+	end := graph.GridNode{8, 8}
 
 	obstacles := []byte{'x'}
 
@@ -93,11 +93,11 @@ func win() {
 		for i := range ROWS {
 			for j := range ROWS {
 				// Draw start and end nodes
-				if i == int32(start.Position.X) && j == int32(start.Position.Y) {
+				if i == int32(start.Row) && j == int32(start.Column) {
 					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Orange)
 				}
 
-				if i == int32(end.Position.X) && j == int32(end.Position.Y) {
+				if i == int32(end.Row) && j == int32(end.Column) {
 					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Green)
 				}
 
@@ -110,18 +110,18 @@ func win() {
 					// Draw visited
 					for _, v := range readyToDrawVisitedNodes {
 						// Do not draw on top of the start node
-						if i == int32(start.Position.X) && j == int32(start.Position.Y) {
+						if i == int32(start.Row) && j == int32(start.Column) {
 							continue
 						}
 
-						if i == int32(v.Position.X) && j == int32(v.Position.Y) {
+						if i == int32(v.Row) && j == int32(v.Column) {
 							rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.LightGray)
 						}
 					}
 
 					// Draw path
 					for _, e := range readyToDrawPathEdges {
-						if i == int32(e.To.Position.X) && j == int32(e.To.Position.Y) {
+						if i == int32(e.To.Row) && j == int32(e.To.Column) {
 							rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Beige)
 						}
 					}

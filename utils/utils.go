@@ -9,7 +9,7 @@ func ContainsNode(haystack []*graph.GridNode, needle *graph.GridNode) bool {
 	// Not the most efficient method...
 	contains := false
 	for _, n := range haystack {
-		if n.Position.X == needle.Position.X && n.Position.Y == needle.Position.Y {
+		if n.Row == needle.Row && n.Column == needle.Column {
 			contains = true
 		}
 	}

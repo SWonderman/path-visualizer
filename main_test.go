@@ -14,12 +14,12 @@ func TestGetNeighboursTopLeft(t *testing.T) {
 		{'-', '-', '-', '-'},
 	}
 
-	node := &graph.GridNode{Position: graph.Vector2{X: 0, Y: 0}}
+	node := &graph.GridNode{0, 0}
 	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
-		x int
-		y int
+		row    int
+		column int
 	}{
 		{0, 1},
 		{1, 0},
@@ -30,12 +30,12 @@ func TestGetNeighboursTopLeft(t *testing.T) {
 	}
 
 	for idx, coords := range expected {
-		if coords.x != neighbours[idx].To.Position.X {
-			t.Fatalf("Invalid neighbour x coordinate, expected %d but got %d", coords.x, neighbours[idx].To.Position.X)
+		if coords.row != neighbours[idx].To.Row {
+			t.Fatalf("Invalid neighbour row coordinate, expected %d but got %d", coords.row, neighbours[idx].To.Row)
 		}
 
-		if coords.y != neighbours[idx].To.Position.Y {
-			t.Fatalf("Invalid neighbour y coordinate, expected %d but got %d", coords.y, neighbours[idx].To.Position.Y)
+		if coords.column != neighbours[idx].To.Column {
+			t.Fatalf("Invalid neighbour column coordinate, expected %d but got %d", coords.column, neighbours[idx].To.Column)
 		}
 	}
 }
@@ -49,15 +49,15 @@ func TestGetNeighboursTopRight(t *testing.T) {
 		{'-', '-', '-', '-'},
 	}
 
-	node := &graph.GridNode{Position: graph.Vector2{X: 3, Y: 0}}
+	node := &graph.GridNode{0, 3}
 	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
-		x int
-		y int
+		row    int
+		column int
 	}{
-		{3, 1},
-		{2, 0},
+		{1, 3},
+		{0, 2},
 	}
 
 	if len(neighbours) != 2 {
@@ -65,12 +65,12 @@ func TestGetNeighboursTopRight(t *testing.T) {
 	}
 
 	for idx, coords := range expected {
-		if coords.x != neighbours[idx].To.Position.X {
-			t.Fatalf("Invalid neighbour x coordinate, expected %d but got %d", coords.x, neighbours[idx].To.Position.X)
+		if coords.row != neighbours[idx].To.Row {
+			t.Fatalf("Invalid neighbour row coordinate, expected %d but got %d", coords.row, neighbours[idx].To.Row)
 		}
 
-		if coords.y != neighbours[idx].To.Position.Y {
-			t.Fatalf("Invalid neighbour y coordinate, expected %d but got %d", coords.y, neighbours[idx].To.Position.Y)
+		if coords.column != neighbours[idx].To.Column {
+			t.Fatalf("Invalid neighbour column coordinate, expected %d but got %d", coords.column, neighbours[idx].To.Column)
 		}
 	}
 }
@@ -84,15 +84,15 @@ func TestGetNeighboursBottomLeft(t *testing.T) {
 		{'S', '-', '-', '-'},
 	}
 
-	node := &graph.GridNode{Position: graph.Vector2{X: 0, Y: 4}}
+	node := &graph.GridNode{0, 4}
 	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
-		x int
-		y int
+		row    int
+		column int
 	}{
-		{0, 3},
-		{1, 4},
+		{3, 0},
+		{4, 1},
 	}
 
 	if len(neighbours) != 2 {
@@ -100,12 +100,12 @@ func TestGetNeighboursBottomLeft(t *testing.T) {
 	}
 
 	for idx, coords := range expected {
-		if coords.x != neighbours[idx].To.Position.X {
-			t.Fatalf("Invalid neighbour x coordinate, expected %d but got %d", coords.x, neighbours[idx].To.Position.X)
+		if coords.row != neighbours[idx].To.Row {
+			t.Fatalf("Invalid neighbour row coordinate, expected %d but got %d", coords.row, neighbours[idx].To.Row)
 		}
 
-		if coords.y != neighbours[idx].To.Position.Y {
-			t.Fatalf("Invalid neighbour y coordinate, expected %d but got %d", coords.y, neighbours[idx].To.Position.Y)
+		if coords.column != neighbours[idx].To.Column {
+			t.Fatalf("Invalid neighbour column coordinate, expected %d but got %d", coords.column, neighbours[idx].To.Column)
 		}
 	}
 }
@@ -119,15 +119,15 @@ func TestGetNeighboursBottomRight(t *testing.T) {
 		{'-', '-', '-', 'S'},
 	}
 
-	node := &graph.GridNode{Position: graph.Vector2{X: 3, Y: 4}}
+	node := &graph.GridNode{4, 3}
 	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
-		x int
-		y int
+		row    int
+		column int
 	}{
 		{3, 3},
-		{2, 4},
+		{4, 2},
 	}
 
 	if len(neighbours) != 2 {
@@ -135,12 +135,12 @@ func TestGetNeighboursBottomRight(t *testing.T) {
 	}
 
 	for idx, coords := range expected {
-		if coords.x != neighbours[idx].To.Position.X {
-			t.Fatalf("Invalid neighbour x coordinate, expected %d but got %d", coords.x, neighbours[idx].To.Position.X)
+		if coords.row != neighbours[idx].To.Row {
+			t.Fatalf("Invalid neighbour row coordinate, expected %d but got %d", coords.row, neighbours[idx].To.Row)
 		}
 
-		if coords.y != neighbours[idx].To.Position.Y {
-			t.Fatalf("Invalid neighbour y coordinate, expected %d but got %d", coords.y, neighbours[idx].To.Position.Y)
+		if coords.column != neighbours[idx].To.Column {
+			t.Fatalf("Invalid neighbour column coordinate, expected %d but got %d", coords.column, neighbours[idx].To.Column)
 		}
 	}
 }
@@ -154,17 +154,17 @@ func TestGetNeighboursMiddle(t *testing.T) {
 		{'-', '-', '-', '-', '-'},
 	}
 
-	node := &graph.GridNode{Position: graph.Vector2{X: 2, Y: 2}}
+	node := &graph.GridNode{2, 2}
 	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
-		x int
-		y int
+		row    int
+		column int
 	}{
-		{2, 1},
-		{2, 3},
-		{3, 2},
 		{1, 2},
+		{3, 2},
+		{2, 3},
+		{2, 1},
 	}
 
 	if len(neighbours) != 4 {
@@ -172,12 +172,12 @@ func TestGetNeighboursMiddle(t *testing.T) {
 	}
 
 	for idx, coords := range expected {
-		if coords.x != neighbours[idx].To.Position.X {
-			t.Fatalf("Invalid neighbour x coordinate, expected %d but got %d", coords.x, neighbours[idx].To.Position.X)
+		if coords.row != neighbours[idx].To.Row {
+			t.Fatalf("Invalid neighbour row coordinate, expected %d but got %d", coords.row, neighbours[idx].To.Row)
 		}
 
-		if coords.y != neighbours[idx].To.Position.Y {
-			t.Fatalf("Invalid neighbour y coordinate, expected %d but got %d", coords.y, neighbours[idx].To.Position.Y)
+		if coords.column != neighbours[idx].To.Column {
+			t.Fatalf("Invalid neighbour column coordinate, expected %d but got %d", coords.column, neighbours[idx].To.Column)
 		}
 	}
 }

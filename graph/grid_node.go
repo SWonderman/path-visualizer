@@ -3,35 +3,36 @@ package graph
 import "slices"
 
 type GridNode struct {
-	Position Vector2
+	Row    int
+	Column int
 }
 
 func (node *GridNode) GetNeighbours(matrix *[][]byte, obstacles *[]byte) []*Edge {
 	var nodes []*Edge
 
-	x := node.Position.X
-	y := node.Position.Y
+	row := node.Row
+	column := node.Column
 
 	orthogonalDirectionWeight := 1.0
 
 	// TOP
-	if y-1 >= 0 && !slices.Contains(*obstacles, (*matrix)[x][y-1]) {
-		nodes = append(nodes, &Edge{node, &GridNode{Position: Vector2{X: x, Y: y - 1}}, orthogonalDirectionWeight})
+	if row-1 >= 0 && !slices.Contains(*obstacles, (*matrix)[row-1][column]) {
+		nodes = append(nodes, &Edge{node, &GridNode{Row: row - 1, Column: column}, orthogonalDirectionWeight})
 	}
 
 	// DOWN
-	if y+1 <= len(*matrix)-1 && !slices.Contains(*obstacles, (*matrix)[x][y+1]) {
-		nodes = append(nodes, &Edge{node, &GridNode{Position: Vector2{X: x, Y: y + 1}}, orthogonalDirectionWeight})
+	if row+1 <= len(*matrix)-1 && !slices.Contains(*obstacles, (*matrix)[row+1][column]) {
+		nodes = append(nodes, &Edge{node, &GridNode{Row: row + 1, Column: column}, orthogonalDirectionWeight})
 	}
 
 	// RIGHT
-	if x+1 <= len((*matrix)[0])-1 && !slices.Contains(*obstacles, (*matrix)[x+1][y]) {
-		nodes = append(nodes, &Edge{node, &GridNode{Position: Vector2{X: x + 1, Y: y}}, orthogonalDirectionWeight})
+	if column+1 <= len((*matrix)[0])-1 && !slices.Contains(*obstacles, (*matrix)[row][column+1]) {
+		nodes = append(nodes, &Edge{node, &GridNode{Row: row, Column: column + 1}, orthogonalDirectionWeight})
 	}
 
 	// LEFT
-	if x-1 >= 0 && !slices.Contains(*obstacles, (*matrix)[x-1][y]) {
-		nodes = append(nodes, &Edge{node, &GridNode{Position: Vector2{X: x - 1, Y: y}}, orthogonalDirectionWeight})
+	if column-1 >= 0 && !slices.Contains(*obstacles, (*matrix)[row][column-1]) {
+		nodes = append(nodes, &Edge{node, &GridNode{Row: row, Column: column - 1}, orthogonalDirectionWeight})
 	}
 
 	return nodes
