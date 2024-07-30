@@ -15,7 +15,7 @@ func TestGetNeighboursTopLeft(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Position: graph.Vector2{X: 0, Y: 0}}
-	neighbours := node.GetNeighbours(&matrix)
+	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
 		x int
@@ -50,7 +50,7 @@ func TestGetNeighboursTopRight(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Position: graph.Vector2{X: 3, Y: 0}}
-	neighbours := node.GetNeighbours(&matrix)
+	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
 		x int
@@ -85,7 +85,7 @@ func TestGetNeighboursBottomLeft(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Position: graph.Vector2{X: 0, Y: 4}}
-	neighbours := node.GetNeighbours(&matrix)
+	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
 		x int
@@ -120,7 +120,7 @@ func TestGetNeighboursBottomRight(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Position: graph.Vector2{X: 3, Y: 4}}
-	neighbours := node.GetNeighbours(&matrix)
+	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
 		x int
@@ -155,7 +155,7 @@ func TestGetNeighboursMiddle(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Position: graph.Vector2{X: 2, Y: 2}}
-	neighbours := node.GetNeighbours(&matrix)
+	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
 		x int
