@@ -21,8 +21,8 @@ func TestGetNeighboursTopLeft(t *testing.T) {
 		row    int
 		column int
 	}{
-		{0, 1},
 		{1, 0},
+		{0, 1},
 	}
 
 	if len(neighbours) != 2 {
@@ -84,7 +84,7 @@ func TestGetNeighboursBottomLeft(t *testing.T) {
 		{'S', '-', '-', '-'},
 	}
 
-	node := &graph.GridNode{0, 4}
+	node := &graph.GridNode{4, 0}
 	neighbours := node.GetNeighbours(&matrix, &[]byte{'x'})
 
 	expected := []struct {
