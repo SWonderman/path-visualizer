@@ -13,6 +13,7 @@ import (
 const WINDOW_WIDTH int32 = 450
 const WINDOW_HEIGHT int32 = 450
 
+const COLUMNS int32 = 9
 const ROWS int32 = 9
 const BLOCK_SIZE int32 = 50
 
@@ -29,6 +30,7 @@ func win() {
 	obstacles := []byte{'x'}
 
 	var result *algo.SearchResult
+	var color rl.Color
 	runAlgorithm := false
 	wasAlgorithmRun := false
 
@@ -89,22 +91,21 @@ func win() {
 
 		rl.ClearBackground(rl.RayWhite)
 
-		// TODO: optimize those nested loops
 		for i := range ROWS {
-			for j := range ROWS {
-				// Draw start and end nodes
-				if i == int32(start.Row) && j == int32(start.Column) {
-					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Orange)
+			for j := range COLUMNS {
+
+				cell := (*matrix)[i][j]
+				if cell == 'S' {
+					color = rl.Orange
+				} else if cell == 'F' {
+					color = rl.Green
+				} else if slices.Contains(obstacles, cell) {
+					color = rl.Black
+				} else {
+					color = rl.White
 				}
 
-				if i == int32(end.Row) && j == int32(end.Column) {
-					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Green)
-				}
-
-				// Draw obstacles
-				if slices.Contains(obstacles, (*matrix)[i][j]) {
-					rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Black)
-				}
+				rl.DrawRectangle(j*BLOCK_SIZE+2, i*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, color)
 
 				if result != nil {
 					// Draw visited
@@ -115,21 +116,21 @@ func win() {
 						}
 
 						if i == int32(v.Row) && j == int32(v.Column) {
-							rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.LightGray)
+							rl.DrawRectangle(j*BLOCK_SIZE+2, i*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.LightGray)
 						}
 					}
 
 					// Draw path
 					for _, e := range readyToDrawPathEdges {
 						if i == int32(e.To.Row) && j == int32(e.To.Column) {
-							rl.DrawRectangle(i*BLOCK_SIZE+2, j*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Beige)
+							rl.DrawRectangle(j*BLOCK_SIZE+2, i*BLOCK_SIZE+2, BLOCK_SIZE-4, BLOCK_SIZE-4, rl.Beige)
 						}
 					}
 				}
 
 				// Draw grid
-				rl.DrawLine(i*BLOCK_SIZE, 0, i*BLOCK_SIZE, WINDOW_HEIGHT, rl.Black)
-				rl.DrawLine(0, j*BLOCK_SIZE, WINDOW_WIDTH, j*BLOCK_SIZE, rl.Black)
+				rl.DrawLine(j*BLOCK_SIZE, 0, j*BLOCK_SIZE, WINDOW_HEIGHT, rl.Black)
+				rl.DrawLine(0, i*BLOCK_SIZE, WINDOW_WIDTH, i*BLOCK_SIZE, rl.Black)
 			}
 		}
 
