@@ -34,11 +34,16 @@ func win() {
 	rl.SetTargetFPS(60)
 
 	matrix := matrix.GetSimpleMatrixNoObstacles()
-	start := graph.GridNode{0, 0}
-	end := graph.GridNode{8, 8}
 
 	obstacles := []byte{'x'}
 	customObstaclePositions := make(map[graph.GridNode]bool)
+
+	startEndQueue := make(chan string, 2)
+	startEndQueue <- "start"
+	startEndQueue <- "end"
+
+	// index 0 = start, index 1 = end
+	startEndPositions := [2]*graph.GridNode{nil, nil}
 
 	var result *algo.SearchResult
 	var color rl.Color
@@ -86,9 +91,25 @@ func win() {
 				customObstaclePositions[*newObstaclePosition] = true
 			}
 		}
+		if rl.IsMouseButtonPressed(rl.MouseButtonRight) {
+			selectedGridPosition := convertMousePositionToGrid(rl.GetMousePosition())
+			if startEndPositions[0] != nil && selectedGridPosition.Row == startEndPositions[0].Row && selectedGridPosition.Column == startEndPositions[0].Column {
+				startEndPositions[0] = nil
+			} else if startEndPositions[1] != nil && selectedGridPosition.Row == startEndPositions[1].Row && selectedGridPosition.Column == startEndPositions[1].Column {
+				startEndPositions[1] = nil
+			} else {
+				value := <-startEndQueue
+				if value == "start" {
+					startEndPositions[0] = selectedGridPosition
+				} else {
+					startEndPositions[1] = selectedGridPosition
+				}
+				startEndQueue <- value
+			}
+		}
 
 		if runAlgorithm {
-			result = algo.RunUcs(matrix, &start, &end, customObstaclePositions, &obstacles)
+			result = algo.RunUcs(matrix, startEndPositions[0], startEndPositions[1], customObstaclePositions, &obstacles)
 			runAlgorithm = false
 			wasAlgorithmRun = true
 		}
@@ -116,9 +137,9 @@ func win() {
 			for j := range COLUMNS {
 
 				cell := (*matrix)[i][j]
-				if cell == 'S' {
+				if startEndPositions[0] != nil && (cell == 'S' || (int32(startEndPositions[0].Row) == i && int32(startEndPositions[0].Column) == j)) {
 					color = rl.Orange
-				} else if cell == 'F' {
+				} else if startEndPositions[1] != nil && (cell == 'F' || (int32(startEndPositions[1].Row) == i && int32(startEndPositions[1].Column) == j)) {
 					color = rl.Green
 				} else if slices.Contains(obstacles, cell) || customObstaclePositions[graph.GridNode{Row: int(i), Column: int(j)}] {
 					color = rl.Black
@@ -132,7 +153,7 @@ func win() {
 					// Draw visited
 					for _, v := range readyToDrawVisitedNodes {
 						// Do not draw on top of the start node
-						if i == int32(start.Row) && j == int32(start.Column) {
+						if i == int32(startEndPositions[0].Row) && j == int32(startEndPositions[0].Column) {
 							continue
 						}
 
