@@ -7,7 +7,7 @@ type GridNode struct {
 	Column int
 }
 
-func (node *GridNode) GetNeighbours(matrix *[][]byte, obstacles *[]byte) []*Edge {
+func (node *GridNode) GetNeighbours(matrix *[][]byte, customObstaclePositions map[GridNode]bool, obstacles *[]byte) []*Edge {
 	var nodes []*Edge
 
 	row := node.Row
@@ -16,22 +16,22 @@ func (node *GridNode) GetNeighbours(matrix *[][]byte, obstacles *[]byte) []*Edge
 	orthogonalDirectionWeight := 1.0
 
 	// TOP
-	if row-1 >= 0 && !slices.Contains(*obstacles, (*matrix)[row-1][column]) {
+	if row-1 >= 0 && !slices.Contains(*obstacles, (*matrix)[row-1][column]) && !customObstaclePositions[GridNode{row - 1, column}] {
 		nodes = append(nodes, &Edge{node, &GridNode{Row: row - 1, Column: column}, orthogonalDirectionWeight})
 	}
 
 	// DOWN
-	if row+1 <= len(*matrix)-1 && !slices.Contains(*obstacles, (*matrix)[row+1][column]) {
+	if row+1 <= len(*matrix)-1 && !slices.Contains(*obstacles, (*matrix)[row+1][column]) && !customObstaclePositions[GridNode{row + 1, column}] {
 		nodes = append(nodes, &Edge{node, &GridNode{Row: row + 1, Column: column}, orthogonalDirectionWeight})
 	}
 
 	// RIGHT
-	if column+1 <= len((*matrix)[0])-1 && !slices.Contains(*obstacles, (*matrix)[row][column+1]) {
+	if column+1 <= len((*matrix)[0])-1 && !slices.Contains(*obstacles, (*matrix)[row][column+1]) && !customObstaclePositions[GridNode{row, column + 1}] {
 		nodes = append(nodes, &Edge{node, &GridNode{Row: row, Column: column + 1}, orthogonalDirectionWeight})
 	}
 
 	// LEFT
-	if column-1 >= 0 && !slices.Contains(*obstacles, (*matrix)[row][column-1]) {
+	if column-1 >= 0 && !slices.Contains(*obstacles, (*matrix)[row][column-1]) && !customObstaclePositions[GridNode{row, column - 1}] {
 		nodes = append(nodes, &Edge{node, &GridNode{Row: row, Column: column - 1}, orthogonalDirectionWeight})
 	}
 

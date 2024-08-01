@@ -17,17 +17,28 @@ const COLUMNS int32 = 9
 const ROWS int32 = 9
 const BLOCK_SIZE int32 = 50
 
+func convertMousePositionToGrid(mousePosition rl.Vector2) *graph.GridNode {
+	row := int(mousePosition.Y / float32(BLOCK_SIZE))
+	column := int(mousePosition.X / float32(BLOCK_SIZE))
+
+	return &graph.GridNode{
+		Row:    row,
+		Column: column,
+	}
+}
+
 func win() {
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Path Visualizer")
 	defer rl.CloseWindow()
 
 	rl.SetTargetFPS(60)
 
-	matrix := matrix.GetSimpleMatrixWithObstacles()
+	matrix := matrix.GetSimpleMatrixNoObstacles()
 	start := graph.GridNode{0, 0}
 	end := graph.GridNode{8, 8}
 
 	obstacles := []byte{'x'}
+	customObstaclePositions := make(map[graph.GridNode]bool)
 
 	var result *algo.SearchResult
 	var color rl.Color
@@ -65,9 +76,19 @@ func win() {
 		if rl.IsKeyDown(rl.KeyEnter) {
 			runAlgorithm = true
 		}
+		if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
+			// Toggle custom obstacles
+			newObstaclePosition := convertMousePositionToGrid(rl.GetMousePosition())
+			_, exists := customObstaclePositions[*newObstaclePosition]
+			if exists {
+				delete(customObstaclePositions, *newObstaclePosition)
+			} else {
+				customObstaclePositions[*newObstaclePosition] = true
+			}
+		}
 
 		if runAlgorithm {
-			result = algo.RunUcs(matrix, &start, &end, &obstacles)
+			result = algo.RunUcs(matrix, &start, &end, customObstaclePositions, &obstacles)
 			runAlgorithm = false
 			wasAlgorithmRun = true
 		}
@@ -99,7 +120,7 @@ func win() {
 					color = rl.Orange
 				} else if cell == 'F' {
 					color = rl.Green
-				} else if slices.Contains(obstacles, cell) {
+				} else if slices.Contains(obstacles, cell) || customObstaclePositions[graph.GridNode{Row: int(i), Column: int(j)}] {
 					color = rl.Black
 				} else {
 					color = rl.White
