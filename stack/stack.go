@@ -26,3 +26,7 @@ func (stack *Stack) Pop() interface{} {
 
 	return lastElementValue
 }
+
+func (stack *Stack) Len() int {
+	return stack.dll.Len()
+}

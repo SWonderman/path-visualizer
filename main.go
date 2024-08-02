@@ -77,7 +77,7 @@ func main() {
 				wasAlgorithmRun = false
 			}
 		}
-		if rl.IsKeyDown(rl.KeyEnter) {
+		if rl.IsKeyDown(rl.KeyEnter) && startEndStack.Len() == 0 {
 			runAlgorithm = true
 		}
 		if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
