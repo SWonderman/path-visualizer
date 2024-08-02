@@ -5,6 +5,7 @@ import (
 	"sw/visualizer/algo"
 	"sw/visualizer/graph"
 	"sw/visualizer/matrix"
+	"sw/visualizer/stack"
 	"sw/visualizer/utils"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -38,9 +39,9 @@ func win() {
 	obstacles := []byte{'x'}
 	customObstaclePositions := make(map[graph.GridNode]bool)
 
-	startEndQueue := make(chan string, 2)
-	startEndQueue <- "start"
-	startEndQueue <- "end"
+	startEndStack := stack.NewStack()
+	startEndStack.Push("end")
+	startEndStack.Push("start")
 
 	// index 0 = start, index 1 = end
 	startEndPositions := [2]*graph.GridNode{nil, nil}
@@ -95,16 +96,17 @@ func win() {
 			selectedGridPosition := convertMousePositionToGrid(rl.GetMousePosition())
 			if startEndPositions[0] != nil && selectedGridPosition.Row == startEndPositions[0].Row && selectedGridPosition.Column == startEndPositions[0].Column {
 				startEndPositions[0] = nil
+				startEndStack.Push("start")
 			} else if startEndPositions[1] != nil && selectedGridPosition.Row == startEndPositions[1].Row && selectedGridPosition.Column == startEndPositions[1].Column {
 				startEndPositions[1] = nil
+				startEndStack.Push("end")
 			} else {
-				value := <-startEndQueue
+				value := startEndStack.Pop()
 				if value == "start" {
 					startEndPositions[0] = selectedGridPosition
-				} else {
+				} else if value == "end" {
 					startEndPositions[1] = selectedGridPosition
 				}
-				startEndQueue <- value
 			}
 		}
 
