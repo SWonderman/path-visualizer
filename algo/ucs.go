@@ -74,5 +74,11 @@ func RunUcs(matrix *[][]byte, start *graph.GridNode, end *graph.GridNode, custom
 		}
 	}
 
+	// Include in the search result which nodes were visited by the algorithm
+	// when a path to the end/goal could not be found
+	if !result.Success {
+		result.Visited = visited
+	}
+
 	return result
 }
