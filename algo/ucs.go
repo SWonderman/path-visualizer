@@ -2,7 +2,6 @@ package algo
 
 import (
 	"container/list"
-	"fmt"
 
 	"sw/visualizer/graph"
 	"sw/visualizer/heap"
@@ -38,14 +37,7 @@ type SearchResult struct {
 	Visited      []*graph.GridNode
 }
 
-func (result *SearchResult) ShowCompletePath() {
-	for e := result.CompletePath.Front(); e != nil; e = e.Next() {
-		val := e.Value.(*graph.Edge)
-		fmt.Printf("{%d, %d} ----> {%d, %d}\n", val.From.Row, val.From.Column, val.To.Row, val.To.Column)
-	}
-}
-
-func RunUcs(matrix *[][]byte, start *graph.GridNode, end *graph.GridNode, customObstaclePositions map[graph.GridNode]bool, obstacles *[]byte) *SearchResult {
+func RunUcs(matrix *[][]byte, start *graph.GridNode, end *graph.GridNode, obstaclePositions map[graph.GridNode]bool) *SearchResult {
 	pqueue := heap.MinHeap{}
 	visited := []*graph.GridNode{}
 
@@ -67,7 +59,7 @@ func RunUcs(matrix *[][]byte, start *graph.GridNode, end *graph.GridNode, custom
 		if !utils.ContainsNode(visited, currentNode) {
 			visited = append(visited, currentNode)
 
-			for _, edge := range currentNode.GetNeighbours(matrix, customObstaclePositions, obstacles) {
+			for _, edge := range currentNode.GetNeighbours(matrix, obstaclePositions) {
 				newCost := ucsNode.TravelCost + edge.Weight
 				pqueue.Push(&UcsNode{edge.To, edge, ucsNode, newCost})
 			}

@@ -15,7 +15,7 @@ func TestGetNeighboursTopLeft(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Row: 0, Column: 0}
-	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool), &[]byte{'x'})
+	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool))
 
 	expected := []struct {
 		row    int
@@ -50,7 +50,7 @@ func TestGetNeighboursTopRight(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Row: 0, Column: 3}
-	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool), &[]byte{'x'})
+	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool))
 
 	expected := []struct {
 		row    int
@@ -85,7 +85,7 @@ func TestGetNeighboursBottomLeft(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Row: 4, Column: 0}
-	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool), &[]byte{'x'})
+	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool))
 
 	expected := []struct {
 		row    int
@@ -120,7 +120,7 @@ func TestGetNeighboursBottomRight(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Row: 4, Column: 3}
-	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool), &[]byte{'x'})
+	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool))
 
 	expected := []struct {
 		row    int
@@ -155,7 +155,7 @@ func TestGetNeighboursMiddle(t *testing.T) {
 	}
 
 	node := &graph.GridNode{Row: 2, Column: 2}
-	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool), &[]byte{'x'})
+	neighbours := node.GetNeighbours(&matrix, make(map[graph.GridNode]bool))
 
 	expected := []struct {
 		row    int

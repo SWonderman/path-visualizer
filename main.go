@@ -1,7 +1,6 @@
 package main
 
 import (
-	"slices"
 	"sw/visualizer/algo"
 	"sw/visualizer/graph"
 	"sw/visualizer/matrix"
@@ -11,10 +10,7 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-const WINDOW_WIDTH int32 = 450
-const WINDOW_HEIGHT int32 = 450
-
-const COLUMNS int32 = 9
+const COLUMNS int32 = 18
 const ROWS int32 = 9
 const BLOCK_SIZE int32 = 50
 
@@ -28,16 +24,18 @@ func convertMousePositionToGrid(mousePosition rl.Vector2) *graph.GridNode {
 	}
 }
 
-func win() {
-	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Path Visualizer")
+func main() {
+	matrix := matrix.GenerateEmptyMatrix(ROWS, COLUMNS)
+
+	const windowWidth int32 = COLUMNS * BLOCK_SIZE
+	const windowHeight int32 = ROWS * BLOCK_SIZE
+
+	rl.InitWindow(windowWidth, windowHeight, "Path Visualizer")
 	defer rl.CloseWindow()
 
 	rl.SetTargetFPS(60)
 
-	matrix := matrix.GetSimpleMatrixNoObstacles()
-
-	obstacles := []byte{'x'}
-	customObstaclePositions := make(map[graph.GridNode]bool)
+	obstaclePositions := make(map[graph.GridNode]bool)
 
 	startEndStack := stack.NewStack()
 	startEndStack.Push("end")
@@ -53,7 +51,7 @@ func win() {
 
 	visitedIndex := 0
 	pathIndex := 0
-	fillInterval := float32(0.05)
+	fillInterval := float32(0.02)
 	fillPathInterval := float32(0.3)
 
 	intervalAccumulator := float32(0.0)
@@ -83,13 +81,12 @@ func win() {
 			runAlgorithm = true
 		}
 		if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
-			// Toggle custom obstacles
 			newObstaclePosition := convertMousePositionToGrid(rl.GetMousePosition())
-			_, exists := customObstaclePositions[*newObstaclePosition]
+			_, exists := obstaclePositions[*newObstaclePosition]
 			if exists {
-				delete(customObstaclePositions, *newObstaclePosition)
+				delete(obstaclePositions, *newObstaclePosition)
 			} else {
-				customObstaclePositions[*newObstaclePosition] = true
+				obstaclePositions[*newObstaclePosition] = true
 			}
 		}
 		if rl.IsMouseButtonPressed(rl.MouseButtonRight) {
@@ -111,7 +108,7 @@ func win() {
 		}
 
 		if runAlgorithm {
-			result = algo.RunUcs(matrix, startEndPositions[0], startEndPositions[1], customObstaclePositions, &obstacles)
+			result = algo.RunUcs(matrix, startEndPositions[0], startEndPositions[1], obstaclePositions)
 			runAlgorithm = false
 			wasAlgorithmRun = true
 		}
@@ -138,12 +135,11 @@ func win() {
 		for i := range ROWS {
 			for j := range COLUMNS {
 
-				cell := (*matrix)[i][j]
-				if startEndPositions[0] != nil && (cell == 'S' || (int32(startEndPositions[0].Row) == i && int32(startEndPositions[0].Column) == j)) {
+				if startEndPositions[0] != nil && (int32(startEndPositions[0].Row) == i && int32(startEndPositions[0].Column) == j) {
 					color = rl.Orange
-				} else if startEndPositions[1] != nil && (cell == 'F' || (int32(startEndPositions[1].Row) == i && int32(startEndPositions[1].Column) == j)) {
+				} else if startEndPositions[1] != nil && (int32(startEndPositions[1].Row) == i && int32(startEndPositions[1].Column) == j) {
 					color = rl.Green
-				} else if slices.Contains(obstacles, cell) || customObstaclePositions[graph.GridNode{Row: int(i), Column: int(j)}] {
+				} else if obstaclePositions[graph.GridNode{Row: int(i), Column: int(j)}] {
 					color = rl.Black
 				} else {
 					color = rl.White
@@ -173,15 +169,11 @@ func win() {
 				}
 
 				// Draw grid
-				rl.DrawLine(j*BLOCK_SIZE, 0, j*BLOCK_SIZE, WINDOW_HEIGHT, rl.Black)
-				rl.DrawLine(0, i*BLOCK_SIZE, WINDOW_WIDTH, i*BLOCK_SIZE, rl.Black)
+				rl.DrawLine(j*BLOCK_SIZE, 0, j*BLOCK_SIZE, windowHeight, rl.Black)
+				rl.DrawLine(0, i*BLOCK_SIZE, windowWidth, i*BLOCK_SIZE, rl.Black)
 			}
 		}
 
 		rl.EndDrawing()
 	}
-}
-
-func main() {
-	win()
 }
