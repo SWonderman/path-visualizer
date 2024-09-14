@@ -6,7 +6,8 @@ In the screenshot below, you can see a finished search result. The black nodes r
 Both, the visited nodes and the found shortest path will be drawn incrementally to show the actual behavior of the algorithm.
 
 If a path cannot be found (because, for example, obstacles make it impossible to reach the goal), the visited nodes will still be drawn to represent what the algorithm processed in the case of search failure.
-![Completed search result](./readme/howItLooks.png "How it looks!")
+
+https://github.com/user-attachments/assets/bcb1c825-4c47-44fd-b0fd-17664778e430
 
 ### How to use
 Add/remove obstacles by left-clicking on the grid cells, and add/remove start/end nodes by right-clicking on the grid cells. Run the algorithm by pressing *ENTER* (it is required to place at least start and end nodes in order to run the algorithm), and reset it by pressing *SPACE*.
